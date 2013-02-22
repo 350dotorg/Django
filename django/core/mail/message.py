@@ -148,7 +148,7 @@ class EmailMessage(object):
         msg = self._create_message(msg)
         msg['Subject'] = self.subject
         msg['From'] = self.extra_headers.get('From', self.from_email)
-        msg['To'] = ', '.join(self.to)
+        msg['To'] = self.extra_headers.get('To', ', '.join(self.to))
 
         # Email header names are case-insensitive (RFC 2045), so we have to
         # accommodate that when doing comparisons.
@@ -158,7 +158,7 @@ class EmailMessage(object):
         if 'message-id' not in header_names:
             msg['Message-ID'] = make_msgid()
         for name, value in self.extra_headers.items():
-            if name.lower() == 'from':  # From is already handled
+            if name.lower() in ('from', 'to'):  # From and To are already handled
                 continue
             msg[name] = value
         return msg
